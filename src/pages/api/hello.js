@@ -1,5 +1,5 @@
 import connectDB from '../../lib/database/connection';
-import Post from '../../lib/database/Post';
+import Post from '../../lib/database/model/Video';
 
 export default async function get_User(req, res) {
   await connectDB();

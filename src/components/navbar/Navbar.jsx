@@ -33,7 +33,7 @@ export default function Navbar({ isWatchPage }) {
   return (
     <div
       className="fixed w-full top-0 z-10 flex flex-row items-center justify-between h-12 md:h-[60px]  
-      px-2 py-4 md:px-6 border-b border-white/[0.2] bg-[#141414]"
+      px-2 py-4 md:px-6 border-b border-white/[0.2] bg-[#141414] select-none"
     >
       <div className="flex h-5 items-center">
         <div

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const PostSchema = new mongoose.Schema(
+const VideoSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
@@ -32,21 +32,31 @@ const PostSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-
     dislikes: {
       type: [String],
       default: [],
+    },
+    superLikes: {
+      type: [String],
+      default: [],
+    },
+    rewards: {
+      type: Number,
+      default: 0,
+    },
+    comments: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
 );
 
-let Post;
-
+let Video;
 try {
-  Post = mongoose.model('Post');
+  Video = mongoose.model('Video');
 } catch {
-  Post = mongoose.model('Post', PostSchema);
+  Video = mongoose.model('Video', VideoSchema);
 }
 
-export default Post;
+export default Video;

@@ -25,7 +25,7 @@ export default function Sidebar({ isWatchPage }) {
          } ${
           mobileMenu
             ? 'top-[48px] translate-x-[0px] border-r border-white/[0.2] z-10'
-            : 'translate-x-[-240px]'
+            : 'top-[48px] translate-x-[-240px]'
         }`}
       >
         <div className="flex px-2 md:px-4 flex-col">

@@ -27,9 +27,12 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
 
   const handlePublish = async (event) => {
     event.preventDefault();
+
     setLoadingText('Uploading...');
+
     const imgUri = await uploadToIpfs(imgFile);
     const videoUri = await uploadToIpfs(videoFile);
+
     setLoadingText('Wait...');
     setForm({
       ...form,
@@ -39,6 +42,7 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
       videoUrl: `https://gateway.ipfscdn.io/ipfs/${
         videoUri[0].split('ipfs://')[1]
       }`,
+      tags: form.tags.split(','),
     });
   };
 
@@ -58,6 +62,7 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
       dbSave(form);
     }
   }, [form.thumbnail, form.videoUrl]);
+
   const dbSave = (form) => {
     try {
       axios.post('http://localhost:8080/api/posts/upload', form);
@@ -68,7 +73,7 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
       setLoadingText('Uploaded');
       setTimeout(() => {
         router.push('/dashboard');
-      }, 2000);
+      }, 1500);
     }
   };
 

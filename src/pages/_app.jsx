@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }) {
       network={network}
       authConfig={{
         authUrl: '/api/auth',
-        domain: process.env.DOMAIN,
+        domain: process.env.NEXT_PUBLIC_DOMAIN,
       }}
     >
       <WalletModalProvider>

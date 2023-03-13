@@ -6,7 +6,7 @@ import axios from 'axios';
 export default function Home() {
   const { router } = useStateContext();
   const path = router.query.home;
-  const url = `http://localhost:8080/api/posts/${!path ? 'all' : path}`;
+  const url = `/api/videos/${!path ? 'all' : path}`;
   const [data, setData] = useState([]);
 
   useEffect(() => {

@@ -1,37 +1,28 @@
 import { ThirdwebAuth } from '@thirdweb-dev/auth/next';
 import { PrivateKeyWallet } from '@thirdweb-dev/auth/solana';
-
-const users = {};
+import Channel from './database/model/Channel';
 
 export const { ThirdwebAuthHandler, getUser } = ThirdwebAuth({
   domain: process.env.NEXT_PUBLIC_DOMAIN || '',
   wallet: new PrivateKeyWallet(process.env.PRIVATE_KEY || ''),
-
+  authOptions: {
+    tokenDurationInSeconds: 60 * 60 * 24 * 7,
+  },
   callbacks: {
     onLogin: async (address) => {
-      if (!users[address]) {
-        users[address] = {
-          created_at: Date.now(),
-          last_login_at: Date.now(),
-          num_log_outs: 0,
-        };
-      } else {
-        users[address].last_login_at = Date.now();
+      const channel = await Channel.findOne({ walletAddress: address });
+      if (!channel) {
+        const newChannel = new Channel({
+          name: address,
+          walletAddress: address,
+        });
+        newChannel.save();
       }
-
-      return { role: ['admin'] };
+      return { last_login_at: Date.now() };
     },
     onUser: async (user) => {
-      if (users[user.address]) {
-        users[user.address].user_last_accessed = Date.now();
-      }
-
-      return users[user.address];
-    },
-    onLogout: async (user) => {
-      if (users[user.address]) {
-        users[user.address].num_log_outs++;
-      }
+      const loggedUser = await Channel.findOne({ walletAddress: user.address });
+      return loggedUser;
     },
   },
 });
