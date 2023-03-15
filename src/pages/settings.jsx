@@ -1,9 +1,12 @@
-import React from 'react';
 import FormField from '../components/input/FormField';
-
 import { MdOutlineEdit } from 'react-icons/md';
+import { useStateContext } from '../context';
 
 export default function Settings() {
+  // const { setIsLoading } = useStateContext();
+
+  // setIsLoading(false);
+
   return (
     <div className="flex flex-row justify-center h-full p-3 md:p-4">
       <div className="w-full max-w-screen-2xl">

@@ -1,15 +1,13 @@
 import { ThirdwebProvider } from '@thirdweb-dev/react/solana';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { StateContextProvider } from '../context';
-import Layout from '../components/layout/Layout';
-import '../styles/globals.css';
 
-const network = 'devnet';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
   return (
     <ThirdwebProvider
-      network={network}
+      network="devnet"
       authConfig={{
         authUrl: '/api/auth',
         domain: process.env.NEXT_PUBLIC_DOMAIN,
@@ -17,9 +15,7 @@ function MyApp({ Component, pageProps }) {
     >
       <WalletModalProvider>
         <StateContextProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <Component {...pageProps} />
         </StateContextProvider>
       </WalletModalProvider>
     </ThirdwebProvider>

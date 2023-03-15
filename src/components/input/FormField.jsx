@@ -32,6 +32,7 @@ const FormField = ({
           placeholder={placeholder}
           className="mb-5 py-[15px] sm:px-[25px] px-[15px] border border-white/[0.1] bg-[#0B0B0B]
           placeholder:text-white/[0.4] rounded-xl"
+          required={isRequired}
         />
       )}
     </div>

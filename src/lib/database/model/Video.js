@@ -7,12 +7,15 @@ const VideoSchema = new mongoose.Schema(
     },
     title: {
       type: String,
+      required: true,
     },
     description: {
       type: String,
     },
     thumbnail: {
       type: String,
+      default:
+        'https://www.oyorooms.com/officialoyoblog/wp-content/themes/inframe/assets/images/no-thumbnail-medium.png',
     },
     videoUrl: {
       type: String,

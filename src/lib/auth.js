@@ -1,13 +1,12 @@
 import { ThirdwebAuth } from '@thirdweb-dev/auth/next';
 import { PrivateKeyWallet } from '@thirdweb-dev/auth/solana';
 import Channel from './database/model/Channel';
+import connectDB from './database/connection';
 
 export const { ThirdwebAuthHandler, getUser } = ThirdwebAuth({
   domain: process.env.NEXT_PUBLIC_DOMAIN || '',
   wallet: new PrivateKeyWallet(process.env.PRIVATE_KEY || ''),
-  authOptions: {
-    tokenDurationInSeconds: 60 * 60 * 24 * 7,
-  },
+
   callbacks: {
     onLogin: async (address) => {
       const channel = await Channel.findOne({ walletAddress: address });

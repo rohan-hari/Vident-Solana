@@ -1,3 +1,10 @@
+import Layout from '../../components/layout/Layout';
+import { useStateContext } from '../../context';
+
 export default function () {
-  return <div>Channel</div>;
+  // const { setIsLoading } = useStateContext();
+
+  // setIsLoading(false);
+
+  return <>Channsel</>;
 }

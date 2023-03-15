@@ -1,3 +1,9 @@
+import { useStateContext } from '../context';
+
 export default function () {
-  return <div>Enterd</div>;
+  // const { setIsLoading } = useStateContext();
+
+  // setIsLoading(false);
+
+  return <>Watch</>;
 }

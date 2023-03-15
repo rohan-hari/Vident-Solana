@@ -7,10 +7,10 @@ import VideoCard from '../feed/VideoCard';
 import FormField from '../input/FormField';
 import Thumbnail from '../input/Thumbnail';
 
-export default function EditVideo({ name, videoFile, setVideoFile }) {
+export default function UploadVideo({ name, videoFile, setVideoFile }) {
   const { router, user } = useStateContext();
   const [form, setForm] = useState({
-    userId: user?.data._id,
+    userId: 's',
     title: name,
     description: '',
     tags: '',
@@ -19,7 +19,12 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
     visibility: 'public',
   });
   const handleFormFieldChange = (fieldName, e) => {
-    setForm({ ...form, [fieldName]: e.target.value });
+    if (fieldName === 'tags') {
+      const tags = e.target.value.split(',');
+      setForm({ ...form, [fieldName]: tags });
+    } else {
+      setForm({ ...form, [fieldName]: e.target.value });
+    }
   };
 
   const [imgFile, setImgFile] = useState(null);
@@ -43,7 +48,6 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
       videoUrl: `https://gateway.ipfscdn.io/ipfs/${
         videoUri[0].split('ipfs://')[1]
       }`,
-      tags: form.tags.split(','),
     });
   };
 
@@ -64,17 +68,16 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
     }
   }, [form.thumbnail, form.videoUrl]);
 
-  const dbSave = (form) => {
+  const dbSave = async (form) => {
     try {
-      axios.post('/api/videos/upload', form);
-    } catch (err) {
-      setLoadingText('Error');
-      console.error(err);
-    } finally {
+      await axios.post('/api/videos/upload', form);
       setLoadingText('Uploaded');
-      // setTimeout(() => {
-      //   router.push('/dashboard');
-      // }, 1500);
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1500);
+    } catch (err) {
+      setLoadingText('Error - Retry');
+      console.error(err);
     }
   };
 
@@ -83,7 +86,7 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
       <div className="flex flex-row p-6 justify-center">
         <div className="md:flex w-full md:w-screen max-w-5xl">
           <div className="w-full mr-10 md:min-w-[400px] xl:min-w-[650px]">
-            <form action={handlePublish}>
+            <form onSubmit={handlePublish} method="POST">
               <div className="text-3xl font-medium mb-5"> Details</div>
               <FormField
                 labelName="Title"
@@ -164,31 +167,6 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
                     </div>
                   </label>
                 </div>
-                <div className="flex">
-                  <input
-                    checked={form.visibility === 'locked'}
-                    type="radio"
-                    id="locked"
-                    name="visibility"
-                    value="locked"
-                    className="hidden peer"
-                    required
-                    onChange={(e) => handleFormFieldChange('visibility', e)}
-                  />
-                  <label
-                    htmlFor="locked"
-                    className="inline-flex items-center justify-between w-full px-4 py-3 rounded-lg cursor-pointer
-                    peer-checked:text-[#9891ff] border border-transparent peer-checked:border-[#9891ff]  hover:bg-white/[0.05]"
-                  >
-                    <div className="block">
-                      <div className="w-full ">Locked</div>
-                      <div className="w-full text-sm">
-                        Viewers can watch your video after paying an amount. (5
-                        FTM)
-                      </div>
-                    </div>
-                  </label>
-                </div>
               </div>
             </form>
           </div>
@@ -219,13 +197,22 @@ export default function EditVideo({ name, videoFile, setVideoFile }) {
                   Cancel
                 </button>
               )}
+
               <button
                 type="submit"
                 className={`w-full py-2 rounded-xl ${
                   loadingText === 'Uploaded' ? 'bg-green-600' : 'bg-[#6F6BF2]'
                 } `}
-                disabled={loadingText === 'Publish' ? false : true}
-                onClick={handlePublish}
+                disabled={
+                  loadingText === 'Publish' || loadingText === 'Error - Retry'
+                    ? false
+                    : true
+                }
+                onClick={
+                  loadingText === 'Error - Retry'
+                    ? () => dbSave(form)
+                    : handlePublish
+                }
               >
                 {loadingText}
               </button>

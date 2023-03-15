@@ -2,9 +2,8 @@ import connectDB from '../../../lib/database/connection';
 import Video from '../../../lib/database/model/Video';
 import { getUser } from '../../../lib/auth';
 
-const { data } = (await getUser(req)) || '';
-
 export default async function handler(req, res) {
+  const { data } = (await getUser(req)) || '';
   if (req.method === 'POST' && data) {
     await connectDB();
     const newVideo = new Video({ userId: data.id, ...req.body });

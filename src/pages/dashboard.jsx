@@ -1,6 +1,11 @@
 import { AiOutlineEdit } from 'react-icons/ai';
+import { useStateContext } from '../context';
 
 export default function Studio() {
+  // const { setIsLoading } = useStateContext();
+
+  // setIsLoading(false);
+
   return (
     <div className="flex flex-row justify-center h-full p-3 md:p-4">
       <div className="w-full max-w-screen-2xl pt-2">

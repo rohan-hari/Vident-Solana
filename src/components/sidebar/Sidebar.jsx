@@ -4,13 +4,13 @@ import { menuList } from '../../lib/constants';
 import MenuItem from './MenuItem';
 
 export default function Sidebar({ isWatchPage }) {
-  const { selectedMenu, mobileMenu, router } = useStateContext();
+  const { user, selectedMenu, mobileMenu, router } = useStateContext();
 
   const navigateTo = (slug) => {
     if (slug === 'home') {
       router.push(`/`);
     } else if (slug === 'profile') {
-      router.push(`/channel`);
+      router.push(`/channel/${user?.data._id}`);
     } else router.push(`/${slug}`);
   };
 
@@ -36,7 +36,9 @@ export default function Sidebar({ isWatchPage }) {
                   text={item.name}
                   icon={item.icon}
                   className={`${
-                    selectedMenu === item.slug ? 'bg-[#6F6BF2] ' : ''
+                    selectedMenu === item.slug && item.slug !== 'profile'
+                      ? 'bg-[#6F6BF2]'
+                      : ''
                   }`}
                   action={() => {
                     navigateTo(item.slug);
