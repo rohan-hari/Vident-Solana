@@ -1,29 +1,13 @@
 import { useStateContext } from '../../context';
 import SearchBar from './SearchBar';
-import { useLogin, useLogout } from '@thirdweb-dev/react/solana';
-import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 import { SlMenu } from 'react-icons/sl';
 import { CgClose } from 'react-icons/cg';
-import { useWallet } from '@solana/wallet-adapter-react';
-require('@solana/wallet-adapter-react-ui/styles.css');
 
 export default function Navbar({ isWatchPage }) {
   const { mobileMenu, setMobileMenu, user, isLoggedIn } = useStateContext();
-  const wallet = useWallet();
-  const walletModal = useWalletModal();
-  const { login } = useLogin();
-  const { logout } = useLogout();
 
-  const handleSignIn = async () => {
-    if (!wallet.connected) {
-      walletModal.setVisible(true);
-    } else if (!isLoggedIn) {
-      login();
-    } else {
-      logout();
-    }
-  };
+  const handleSignIn = async () => {};
 
   const mobileMenuToggle = () => {
     setMobileMenu(!mobileMenu);
@@ -72,11 +56,7 @@ export default function Navbar({ isWatchPage }) {
             }`}
             onClick={handleSignIn}
           >
-            {!wallet.connected
-              ? 'Connect'
-              : isLoggedIn
-              ? 'Sign Out'
-              : 'Sign In'}
+            Connect
           </button>
           {/* <div className="flex h-9 w-9 overflow-hidden rounded-full md:ml-4">
             <img

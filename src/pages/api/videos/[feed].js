@@ -1,10 +1,14 @@
 import connectDB from '../../../lib/database/connection';
 import Video from '../../../lib/database/model/Video';
-import { getUser } from '../../../lib/auth';
+import { verifyToken } from '../../../lib/auth';
 
 export default async function handler(req, res) {
   await connectDB();
   const { feed } = req.query;
+
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
   // All Videos Randomly Selected --------------------------------------------
   if (feed === 'all') {
@@ -26,24 +30,26 @@ export default async function handler(req, res) {
   }
   // Subscribd Channel Videos -------------------------------------------------
   else if (feed === 'subscribed') {
-    const { data } = (await getUser(req)) || '';
-    if (data) {
-      try {
-        const subChannels = data.subscribedChannels;
-        const list = await Promise.all(
-          subChannels.map((channelId) => {
-            return Video.find({ userId: channelId });
-          })
-        );
-        res
-          .status(200)
-          .send(list.flat().sort((a, b) => b.createdAt - a.createdAt));
-      } catch (err) {
-        res.status(400).json({ error: 'Error on fetching videos' });
+    await verifyToken(async (req, res) => {
+      const user = req.user;
+      if (user) {
+        try {
+          const subChannels = user.subscribedChannels;
+          const list = await Promise.all(
+            subChannels.map((channelId) => {
+              return Video.find({ userId: channelId });
+            })
+          );
+          res
+            .status(200)
+            .send(list.flat().sort((a, b) => b.createdAt - a.createdAt));
+        } catch (err) {
+          res.status(400).json({ error: 'Error on fetching videos' });
+        }
+      } else {
+        res.status(400).json({ error: 'Not logged in' });
       }
-    } else {
-      res.status(400).json({ error: 'Not logged in' });
-    }
+    })(req, res);
   }
   // Get similar videos based on Tags -----------------------------------------
   else if (feed === 'tags') {

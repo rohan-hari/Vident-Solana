@@ -1,29 +1,59 @@
-import { ThirdwebAuth } from '@thirdweb-dev/auth/next';
-import { PrivateKeyWallet } from '@thirdweb-dev/auth/solana';
-import Channel from './database/model/Channel';
-import connectDB from './database/connection';
+import axios from 'axios';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import connectDB from '../lib/database/connection';
+import Channel from '../lib/database/model/Channel';
 
-export const { ThirdwebAuthHandler, getUser } = ThirdwebAuth({
-  domain: process.env.NEXT_PUBLIC_DOMAIN || '',
-  wallet: new PrivateKeyWallet(process.env.PRIVATE_KEY || ''),
+const createNonceGenerator = () => {
+  let nonce = null;
 
-  callbacks: {
-    onLogin: async (address) => {
-      const channel = await Channel.findOne({ walletAddress: address });
-      if (!channel) {
-        const newChannel = new Channel({
-          name: address,
-          walletAddress: address,
-        });
-        newChannel.save();
+  const generateNonce = () => {
+    nonce = crypto.randomBytes(16).toString('hex');
+    return nonce;
+  };
+
+  const fetchNonce = () => {
+    return generateNonce();
+  };
+
+  const authenticate = async (signature, address) => {
+    return await axios.post('/api/auth', { signature, address, nonce });
+  };
+
+  return {
+    fetchNonce,
+    authenticate,
+  };
+};
+
+export const verifyToken = (handler) => {
+  return async function (req, res, next) {
+    const token = req.cookies.access_token;
+    if (!token) res.status(401).send('Unauthorized');
+    else {
+      try {
+        const { address } = jwt.verify(token, process.env.JWT_SECRET);
+        if (address) {
+          await connectDB();
+          req.user = await Channel.findOne({ walletAddress: address });
+          if (!req.user) {
+            const newUser = new Channel({
+              name: address,
+              walletAddress: address,
+            });
+            newUser.save();
+            req.user = newUser;
+          }
+        }
+        await handler(req, res, next);
+      } catch (err) {
+        console.error(err);
+        return res.status(401).json({ message: 'Invalid authorization token' });
       }
-      return { last_login_at: Date.now() };
-    },
-    onUser: async (user) => {
-      const loggedUser = await Channel.findOne({ walletAddress: user.address });
-      return loggedUser;
-    },
-  },
-});
+    }
+  };
+};
 
-export default ThirdwebAuthHandler();
+const nonceGenerator = createNonceGenerator();
+export const fetchNonce = nonceGenerator.fetchNonce;
+export const authenticate = nonceGenerator.authenticate;

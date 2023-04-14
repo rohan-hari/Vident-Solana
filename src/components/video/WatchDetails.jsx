@@ -5,9 +5,7 @@ import { FcLike } from 'react-icons/fc';
 
 export default function VideoDetailsBox() {
   const [activeTab, setActiveTab] = useState('description');
-  // const sponsor = () => {
-  //   console.log('Give an amount');
-  // };
+
   return (
     <div className="bg-[#0B0B0B] p-4 rounded-2xl h-full">
       <div className="flex flex-row justify-between pb-5 ">

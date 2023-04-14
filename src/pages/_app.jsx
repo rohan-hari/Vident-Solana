@@ -1,24 +1,16 @@
-import { ThirdwebProvider } from '@thirdweb-dev/react/solana';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { StateContextProvider } from '../context';
+import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks';
 
 import '../styles/globals.css';
+import '../styles/video-player-styles.css';
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <ThirdwebProvider
-      network="devnet"
-      authConfig={{
-        authUrl: '/api/auth',
-        domain: process.env.NEXT_PUBLIC_DOMAIN,
-      }}
-    >
-      <WalletModalProvider>
-        <StateContextProvider>
-          <Component {...pageProps} />
-        </StateContextProvider>
-      </WalletModalProvider>
-    </ThirdwebProvider>
+    <WalletProvider autoConnect={false}>
+      <StateContextProvider>
+        <Component {...pageProps} />
+      </StateContextProvider>
+    </WalletProvider>
   );
 }
 

@@ -49,7 +49,7 @@ export default function Layout({ children, authRequired }) {
       <Navbar isWatchPage={isWatchPage} />
       <Sidebar isWatchPage={isWatchPage} />
       <div className={`mt-14 h-full  ${isWatchPage ? '' : 'md:ml-[240px]'}`}>
-        {isLoading ? (
+        {/* {isLoading ? (
           <Oval
             height={60}
             width={60}
@@ -64,7 +64,8 @@ export default function Layout({ children, authRequired }) {
           <>You need to login</>
         ) : (
           children
-        )}
+        )} */}
+        {children}
       </div>
     </div>
   );

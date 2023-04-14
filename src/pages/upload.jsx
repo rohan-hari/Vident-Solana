@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BsUpload } from 'react-icons/bs';
-import { ThirdwebProvider } from '@thirdweb-dev/react';
+// import { ThirdwebProvider } from '@thirdweb-dev/react';
 import UploadVideo from '../components/video/UploadVideo';
 import { useStateContext } from '../context';
 
@@ -33,14 +33,14 @@ export default function UploadButton() {
   return (
     <>
       {selectedFile ? (
-        <ThirdwebProvider>
-          <UploadVideo
-            name={selectedFile.name}
-            videoFile={selectedFile}
-            setVideoFile={setSelectedFile}
-          />
-        </ThirdwebProvider>
+        // <ThirdwebProvider>
+        <UploadVideo
+          name={selectedFile.name}
+          videoFile={selectedFile}
+          setVideoFile={setSelectedFile}
+        />
       ) : (
+        // </ThirdwebProvider>
         <div className="flex flex-col items-center justify-center h-full max-h-[600px] px-4">
           <span className="text-4xl font-medium mb-8">Upload Videos</span>
           <button className="h-28 w-28 mb-8 p-6  bg-white/[0.07] rounded-3xl">

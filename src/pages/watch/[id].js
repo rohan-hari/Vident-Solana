@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useStateContext } from '../context';
-import Feed from '../components/feed/Feed';
-import VideoPlayer from '../components/video/VideoPlayer';
-import WatchDetails from '../components/video/WatchDetails';
-import axios from 'axios';
+import { useStateContext } from '../../context';
+import Feed from '../../components/feed/Feed';
+import VideoPlayer from '../../components/video/VideoPlayer';
+import WatchDetails from '../../components/video/WatchDetails';
 
 import { IoShareSocialOutline } from 'react-icons/io5';
 import { BiDislike } from 'react-icons/bi';
@@ -11,31 +9,15 @@ import { AiOutlineLike } from 'react-icons/ai';
 
 export default function () {
   const { router } = useStateContext();
-  const { id } = router.query;
-  const [data, setData] = useState([]);
-  const [videoUrl, setVideoUrl] = useState('');
+  const { id } = router.query();
 
-  const url = `/api/videos/view/${id}`;
-  useEffect(() => {
-    axios
-      .get(url)
-      .then((response) => {
-        setData(response.data);
-        setVideoUrl(response.data.videoUrl);
-      })
-      .catch((error) => console.error(error));
-  }, [id]);
-
-  console.log(data);
-
+  console.log(id);
   return (
     <div className="flex flex-col items-center">
       <div className="w-full max-w-[1600px] flex flex-col lg:flex-row md:px-4 ">
         <div className="flex flex-col lg:w-[calc(100%-400px)] xl:w-[calc(100%-500px)] mx-4 my-3 lg:my-6 bg-[#0B0B0B] rounded-2xl h-full max-h-full">
           <div className=" ">
-            {videoUrl && (
-              <VideoPlayer videoUrl={videoUrl} thumbnail={data.thumbnail} />
-            )}
+            <VideoPlayer />
           </div>
           <div className="flex flex-row items-center justify-between px-2.5 md:px-4">
             <div>

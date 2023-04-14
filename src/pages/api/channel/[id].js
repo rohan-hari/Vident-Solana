@@ -1,11 +1,10 @@
 import connectDB from '../../../lib/database/connection';
 import Channel from '../../../lib/database/model/Channel';
-import { getUser } from '../../../lib/auth';
+import { verifyToken } from '../../../lib/auth';
 
 export default async function handler(req, res) {
   await connectDB();
   const { id } = req.query;
-  const { data } = (await getUser(req)) || '';
 
   // View Channel details by id --------------------------------------------------
   if (req.method === 'GET') {
@@ -18,20 +17,23 @@ export default async function handler(req, res) {
   }
   // Edit Channel by id ----------------------------------------------------------
   else if (req.method === 'PUT') {
-    if (id === data?.id) {
-      try {
-        const updatedChannelData = await Channel.findByIdAndUpdate(
-          id,
-          { $set: req.body },
-          { new: true }
-        );
-        res.status(200).json(updatedChannelData);
-      } catch (err) {
-        res.status(400).json({ error: 'Error updating channel data' });
+    await verifyToken(async (req, res) => {
+      const user = req.user;
+      if (id === user.id) {
+        try {
+          const updatedChannelData = await Channel.findByIdAndUpdate(
+            id,
+            { $set: req.body },
+            { new: true }
+          );
+          res.status(200).json(updatedChannelData);
+        } catch (err) {
+          res.status(400).json({ error: 'Error updating channel data' });
+        }
+      } else {
+        res.status(400).json({ error: 'Not authenticated' });
       }
-    } else {
-      res.status(400).json({ error: 'Not authenticated' });
-    }
+    })(req, res);
   }
   // Delete Channel by id --------------------------------------------------------
   // else if (req.method === 'DELETE') {
@@ -45,7 +47,7 @@ export default async function handler(req, res) {
   //   } else {
   //     res.status(400).json({ error: 'Not authenticated' });
   //   }
-  // } else {
-  //   res.status(405).json({ error: 'Method not allowed' });
-  // }
+  else {
+    res.status(405).json({ error: 'Method not allowed' });
+  }
 }

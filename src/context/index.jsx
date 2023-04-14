@@ -1,6 +1,4 @@
 import React, { useState, useContext, createContext, useEffect } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useUser } from '@thirdweb-dev/react/solana';
 import { useRouter } from 'next/router';
 import Layout from '../components/layout/Layout';
 
@@ -12,9 +10,6 @@ export const StateContextProvider = ({ children }) => {
   const [authRequired, setAuthRequired] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  const wallet = useWallet();
-  const { user, isLoggedIn } = useUser();
 
   useEffect(() => {
     if (
@@ -36,11 +31,9 @@ export const StateContextProvider = ({ children }) => {
         selectedMenu,
         setSelectedMenu,
         router,
-        user,
-        isLoggedIn,
+
         isLoading,
         setIsLoading,
-        wallet,
       }}
     >
       <Layout authRequired={authRequired}>{children}</Layout>

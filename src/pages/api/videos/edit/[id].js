@@ -1,9 +1,11 @@
+import { verifyToken } from '../../../../lib/auth';
 import connectDB from '../../../../lib/database/connection';
 import Video from '../../../../lib/database/model/Video';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   await connectDB();
   const { id } = req.query;
+  const user = req.user;
 
   const video = await Video.findById(id);
   if (!video) res.status(400).json({ error: 'Video not found' });
@@ -11,7 +13,7 @@ export default async function handler(req, res) {
   // Edit Video data by Id ----------------------------------------------------
   if (req.method === 'PUT') {
     try {
-      if (id === video.userId) {
+      if (video.userId === user.id) {
         const updatedVideo = await Video.findByIdAndUpdate(
           id,
           { $set: req.body },
@@ -26,7 +28,7 @@ export default async function handler(req, res) {
   // Delete Video by Id -----------------------------------------------------
   else if (req.method === 'DELETE') {
     try {
-      if (id === video.userId) {
+      if (video.userId === user.id) {
         await Video.findByIdAndDelete(id);
         res.status(200).json('Video deleted');
       } else res.status(400).json({ error: 'Not authenticated' });
@@ -37,3 +39,5 @@ export default async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
   }
 }
+
+export default verifyToken(handler);

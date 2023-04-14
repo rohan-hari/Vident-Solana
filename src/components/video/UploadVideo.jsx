@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useStorageUpload } from '@thirdweb-dev/react';
+// import { useStorageUpload } from '@thirdweb-dev/react';
 import { useStateContext } from '../../context';
 import axios from 'axios';
 
@@ -10,7 +10,7 @@ import Thumbnail from '../input/Thumbnail';
 export default function UploadVideo({ name, videoFile, setVideoFile }) {
   const { router, user } = useStateContext();
   const [form, setForm] = useState({
-    userId: 's',
+    userId: user?.data._id,
     title: name,
     description: '',
     tags: '',
@@ -31,55 +31,55 @@ export default function UploadVideo({ name, videoFile, setVideoFile }) {
   const [viewImage, setViewImage] = useState(null);
   const [loadingText, setLoadingText] = useState('Publish');
 
-  const handlePublish = async (event) => {
-    event.preventDefault();
+  // const handlePublish = async (event) => {
+  //   event.preventDefault();
 
-    setLoadingText('Uploading...');
+  //   setLoadingText('Uploading...');
 
-    const imgUri = await uploadToIpfs(imgFile);
-    const videoUri = await uploadToIpfs(videoFile);
+  //   const imgUri = await uploadToIpfs(imgFile);
+  //   const videoUri = await uploadToIpfs(videoFile);
 
-    setLoadingText('Wait...');
-    setForm({
-      ...form,
-      thumbnail: `https://gateway.ipfscdn.io/ipfs/${
-        imgUri[0].split('ipfs://')[1]
-      }`,
-      videoUrl: `https://gateway.ipfscdn.io/ipfs/${
-        videoUri[0].split('ipfs://')[1]
-      }`,
-    });
-  };
+  //   setLoadingText('Wait...');
+  //   setForm({
+  //     ...form,
+  //     thumbnail: `https://gateway.ipfscdn.io/ipfs/${
+  //       imgUri[0].split('ipfs://')[1]
+  //     }`,
+  //     videoUrl: `https://gateway.ipfscdn.io/ipfs/${
+  //       videoUri[0].split('ipfs://')[1]
+  //     }`,
+  //   });
+  // };
 
-  const { mutateAsync: upload } = useStorageUpload();
-  const uploadToIpfs = async (file) => {
-    const uri = await upload({
-      data: [file],
-      options: {
-        uploadWithoutDirectory: true,
-      },
-    });
-    return uri;
-  };
+  // const { mutateAsync: upload } = useStorageUpload();
+  // const uploadToIpfs = async (file) => {
+  //   const uri = await upload({
+  //     data: [file],
+  //     options: {
+  //       uploadWithoutDirectory: true,
+  //     },
+  //   });
+  //   return uri;
+  // };
 
-  useEffect(() => {
-    if (form.thumbnail && form.videoUrl) {
-      dbSave(form);
-    }
-  }, [form.thumbnail, form.videoUrl]);
+  // useEffect(() => {
+  //   if (form.thumbnail && form.videoUrl) {
+  //     dbSave(form);
+  //   }
+  // }, [form.thumbnail, form.videoUrl]);
 
-  const dbSave = async (form) => {
-    try {
-      await axios.post('/api/videos/upload', form);
-      setLoadingText('Uploaded');
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1500);
-    } catch (err) {
-      setLoadingText('Error - Retry');
-      console.error(err);
-    }
-  };
+  // const dbSave = async (form) => {
+  //   try {
+  //     await axios.post('/api/videos/upload', form);
+  //     setLoadingText('Uploaded');
+  //     setTimeout(() => {
+  //       router.push('/dashboard');
+  //     }, 1500);
+  //   } catch (err) {
+  //     setLoadingText('Error - Retry');
+  //     console.error(err);
+  //   }
+  // };
 
   return (
     <>
@@ -198,7 +198,7 @@ export default function UploadVideo({ name, videoFile, setVideoFile }) {
                 </button>
               )}
 
-              <button
+              {/* <button
                 type="submit"
                 className={`w-full py-2 rounded-xl ${
                   loadingText === 'Uploaded' ? 'bg-green-600' : 'bg-[#6F6BF2]'
@@ -215,7 +215,7 @@ export default function UploadVideo({ name, videoFile, setVideoFile }) {
                 }
               >
                 {loadingText}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

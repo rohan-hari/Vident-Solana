@@ -1,12 +1,12 @@
 import connectDB from '../../../lib/database/connection';
 import Video from '../../../lib/database/model/Video';
-import { getUser } from '../../../lib/auth';
+import { verifyToken } from '../../../lib/auth';
 
-export default async function handler(req, res) {
-  const { data } = (await getUser(req)) || '';
-  if (req.method === 'POST' && data) {
+async function handler(req, res) {
+  const user = req.user;
+  if (req.method === 'POST') {
     await connectDB();
-    const newVideo = new Video({ userId: data.id, ...req.body });
+    const newVideo = new Video({ userId: user.id, ...req.body });
     try {
       const saveVideo = await newVideo.save();
       res.status(200).json(saveVideo);
@@ -14,6 +14,8 @@ export default async function handler(req, res) {
       res.status(400).json({ error: 'Error Uploading Files' });
     }
   } else {
-    res.status(400).json({ error: 'Not allowed' });
+    res.status(400).json({ error: 'Method not allowed' });
   }
 }
+
+export default verifyToken(handler);
